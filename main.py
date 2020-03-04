@@ -29,8 +29,24 @@ for i, project in list(enumerate(json)):#[:5]:
 	#https://github.com/acaudwell/Gource/wiki/Visualizing-Multiple-Repositories
 	logpath = f"repos/log{i}.txt"
 	os.system(f"gource --output-custom-log {logpath} {gitpath}")
-	usernamefilter = "|".join(usernames)
+
+	# void is substring of void4, due to greedy matching, put void4 first by reversing the list
+	usernamefilter = "|".join(usernames[::-1])
+
+	# Only keep lines with one of the usernames
 	os.system(f"sed -i -nE '/\|{usernamefilter}\|/p' {logpath}")
+
+	# Replace all names by one name
+	#os.system(f"sed -i -E 's/|{usernamefilter}|/|{username}|/' {logpath}")
+	with open(logpath, "r+") as logfile:
+		content = logfile.read()
+		logfile.seek(0)
+		logfile.truncate()
+		for name in usernames:
+			content = content.replace(f"|{name}|", "|"+username+"|")
+		logfile.write(content)
+
+	# Prepend project name to file path
 	os.system(f"sed -i -r 's#(.+)\|#\\1|/{projectname}#' {logpath}")
 
 os.system("cat repos/log*.txt | sort -n > repos/combined.txt")
