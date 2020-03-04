@@ -25,12 +25,12 @@ for i, project in list(enumerate(json)):#[:5]:
 
 	gitpath = f"repos/{projectname}"
 	os.system(f"git clone {git} {gitpath}")
-	
+
 	#https://github.com/acaudwell/Gource/wiki/Visualizing-Multiple-Repositories
 	logpath = f"repos/log{i}.txt"
 	os.system(f"gource --output-custom-log {logpath} {gitpath}")
 	usernamefilter = "|".join(usernames)
-	os.system(f"sed -i -nE '/{usernamefilter}/p' {logpath}")
+	os.system(f"sed -i -nE '/\|{usernamefilter}\|/p' {logpath}")
 	os.system(f"sed -i -r 's#(.+)\|#\\1|/{projectname}#' {logpath}")
 
 os.system("cat repos/log*.txt | sort -n > repos/combined.txt")
