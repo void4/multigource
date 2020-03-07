@@ -13,7 +13,7 @@ json = request.json()
 
 repopath = f"{username}-repos"
 
-os.system("mkdir repos")
+os.system(f"mkdir {repopath}")
 
 for i, project in list(enumerate(json)):#[:5]:
 	print("Project Number:", i+1)
@@ -51,5 +51,5 @@ for i, project in list(enumerate(json)):#[:5]:
 	# Prepend project name to file path
 	os.system(f"sed -i -r 's#(.+)\|#\\1|/{projectname}#' {logpath}")
 
-os.system("cat {repopath}/log*.txt | sort -n > {repopath}/combined.txt")
-os.system("gource {repopath}/combined.txt")
+os.system(f"cat {repopath}/log*.txt | sort -n > {repopath}/combined.txt")
+os.system(f"gource {repopath}/combined.txt")
