@@ -11,6 +11,8 @@ request = requests.get(f'https://api.github.com/users/{username}/repos?per_page=
 
 json = request.json()
 
+repopath = f"{username}-repos"
+
 os.system("mkdir repos")
 
 for i, project in list(enumerate(json)):#[:5]:
@@ -20,14 +22,14 @@ for i, project in list(enumerate(json)):#[:5]:
 	git = project['git_url']
 	print("Project URL:", git,"\n")
 
-	if project["fork"]:
-		continue
+	#if project["fork"]:
+	#	continue
 
-	gitpath = f"repos/{projectname}"
+	gitpath = f"{repopath}/{projectname}"
 	os.system(f"git clone {git} {gitpath}")
 
 	#https://github.com/acaudwell/Gource/wiki/Visualizing-Multiple-Repositories
-	logpath = f"repos/log{i}.txt"
+	logpath = f"{repopath}/log{i}.txt"
 	os.system(f"gource --output-custom-log {logpath} {gitpath}")
 
 	# void is substring of void4, due to greedy matching, put void4 first by reversing the list
@@ -49,5 +51,5 @@ for i, project in list(enumerate(json)):#[:5]:
 	# Prepend project name to file path
 	os.system(f"sed -i -r 's#(.+)\|#\\1|/{projectname}#' {logpath}")
 
-os.system("cat repos/log*.txt | sort -n > repos/combined.txt")
-os.system("gource repos/combined.txt")
+os.system("cat {repopath}/log*.txt | sort -n > {repopath}/combined.txt")
+os.system("gource {repopath}/combined.txt")
